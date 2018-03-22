@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     <title>Survery - FriendSpace</title>
 </head>
@@ -231,60 +232,63 @@
             </ol>
         </form>
         <p>
-            <button type="button" class="btn btn-primary">Submit</button>
+            <button type="button" id="submit-btn" class="btn btn-primary">Submit</button>
         </p>
-    </div>
-    <!-- BELOW CODE IS CRITICAL. IT HANDLES HOW FORM DATA IS SENT TO OUR SERVER -->
-<script type="text/javascript">
+        <!-- Modal -->
+        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog" style="width:330px">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h3 class="modal-title" id="myModalLabel"></h3>
+                    </div>
+                    <div class="modal-body">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- END Modal -->
 
-    // In this code below we create the Front-end JavaScript which "POSTS" our form data to our express server.
-    // In essence, when the user hits submit, jQuery grabs all of the fields then sends a post request to our api
-    // Our api recognizes the route (/api/tables)... and then runs the associated code (found in api-routes.js).
-    // In this case the associated code "saves" the data to the table-data.js file or waitinglist-data.js file
-
-    $(".btn").on("click", function(event) {
-      event.preventDefault();
-    
-      var scores = [];
-      scores.push($("#inlineRadio").val().trim())
-
-      // Here we grab the form elements
-      var newFriend = {
-        name: $("#name").val().trim(),
-        photo: $("#image").val().trim(),
-        scores: scores
-      };
-
-      console.log(newFriend);
-
-      // This line is the magic. It"s very similar to the standard ajax function we used.
-      // Essentially we give it a URL, we give it the object we want to send, then we have a "callback".
-      // The callback is the response of the server. In our case, we set up code in api-routes that "returns" true or false
-      // depending on if a tables is available or not.
-
-      $.post("/api/tables", newReservation,
-        function(data) {
-
-          // If a table is available... tell user they are booked.
-          if (data) {
-            alert("Yay! You are officially booked!");
-          }
-
-          // If a table is available... tell user they on the waiting list.
-          else {
-            alert("Sorry you are on the wait list");
-          }
-
-          // Clear the form when submitting
-          $("#reserve-name").val("");
-          $("#reserve-phone").val("");
-          $("#reserve-email").val("");
-          $("#reserve-unique-id").val("");
-
-        });
-
-    });
-
-</script>
-</body>
-</html>
+        <script type="text/javascript">
+            
+            $("#submit-btn").on("click", function(event) {
+                event.preventDefault();
+                // Creates an array of answers
+                var scores = [];
+                $("input:radio[name=inlineRadioOptions]:checked").each(function(){
+                    scores.push($(this).val());
+                });
+                //console.log(scores);
+                
+                // Creates an object w/scores array created above
+                var userInput = {
+                    name: $("#name").val().trim(),
+                    photo: $("#image").val().trim(),
+                    scores: scores
+                };
+                //console.log(userInput);
+                
+                // POST: sends the object to the backend, 'data' is response sent from the backend
+                $.post("/api/friends", userInput,
+                function(data) {
+                    //console.log(data);
+                    if(data){
+                        $("#myModalLabel").append("Match Found!");
+                        $(".modal-body").html("<img src='" + data.image + "' width='300'>");
+                        $(".modal-body").append("<h3>" + data.name + "</h3>");
+                        $("#myModal").modal("toggle");
+                    }
+                    else {
+                        $("#myModalLabel").append("Sorry no matches");
+                        $("#myModal").modal("toggle");
+                    }
+                });
+                
+            });
+            
+        </script>
+    </body>
+    </html>
