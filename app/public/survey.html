@@ -7,6 +7,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="/assets/style.css">
     <title>Survery - FriendSpace</title>
 </head>
 <body>
@@ -21,7 +22,7 @@
                 <input type="name" class="form-control" id="name" placeholder="Name">
             </div>
             <div class="form-group">
-                <label for="image">Link to Profile Image (Required)</label>
+                <label for="image">Link to Profile Image (Optional)</label>
                 <input type="image-url" class="form-control" id="image" placeholder="URL">
             </div>
         </form>
@@ -260,6 +261,7 @@
                 var scores = [];
                 $("input:radio[name=inlineRadioOptions]:checked").each(function(){
                     scores.push($(this).val());
+                    $(this).prop('checked', false);
                 });
                 //console.log(scores);
                 
@@ -276,7 +278,7 @@
                 function(data) {
                     //console.log(data);
                     if(data){
-                        $("#myModalLabel").append("Match Found!");
+                        $("#myModalLabel").html("Match Found!");
                         $(".modal-body").html("<img src='" + data.image + "' width='300'>");
                         $(".modal-body").append("<h3>" + data.name + "</h3>");
                         $("#myModal").modal("toggle");
@@ -285,6 +287,11 @@
                         $("#myModalLabel").append("Sorry no matches");
                         $("#myModal").modal("toggle");
                     }
+                    // Clear the form when submitting
+                    $("#name").val("");
+                    $("#image").val("");
+                    //$("input:radio[name=inlineRadioOptions]:checked").val("unchecked");
+                    //$(this).prop('checked', false);
                 });
                 
             });

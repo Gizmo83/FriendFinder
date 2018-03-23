@@ -1,4 +1,4 @@
-img {
+#logo {
     vertical-align: top;
     width: 6%;
 }
@@ -7,4 +7,7 @@ h1 {
 }
 .jumbotron {
     margin-top: 100px;
+}
+.modal-body {
+    text-align: center;
 }

@@ -28,6 +28,9 @@ module.exports = function(app) {
             }
         }
         //console.log(matchScore);
+        // push user input after the match
+        friends.push(userInput);
+        //console.log(friends);
         var match = diffArr.indexOf(matchScore);
         //console.log(match);
         var matchName = friends[match].name;
